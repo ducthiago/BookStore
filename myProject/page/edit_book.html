@@ -1,0 +1,170 @@
+{% extends 'myapp.html' %}
+{% load crispy_forms_tags %}
+{% block title %}Xem và sửa{% endblock %}
+{% block content %}
+<br>
+<div class="container">
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{message.tags}}">{{message}}</div>
+        {% endfor %}
+    {% endif %}
+</div>
+<h1 class="text-center ok">{{change.bookName}}</h1><br>
+<div class="container">
+    <div class="row">
+        <div class="col-sm">
+        {% if perms.myApp.change_books %}
+            <form id="update1" class="" action="{% url 'edit_book' change.id %}" method='POST' name="update" enctype="multipart/form-data">
+                {% csrf_token %}
+                <fieldset disabled id="eth">
+                    <div class="row">
+                        <div class="col-sm">
+                            <h6>Tiêu đề*</h6><br>
+                            {{addbook.bookName}}
+                        </div>
+                        <div class="col-sm">
+                            <h6>Tác giả*</h6><br>
+                            {{addbook.authorName}}
+                        </div>
+                    </div><br>
+                    <div class="row">
+                        <div class="col-sm">
+                            <h6>Mô tả về sách</h6><br>
+                            {{addbook.decriptions}}
+                        </div>
+                    </div><br>
+                    <div class="row">
+                        <div class="col-sm">
+                            <h6>Ngày phát hành*</h6><br>
+                            {{addbook.releaseDate}}
+                        </div>
+                        <div class="col-sm">
+                            <h6>Số trang</h6><br>
+                            {{addbook.pages}}
+                        </div>
+                    </div><br>
+                    <div class="row">
+                        <div class="col-sm">
+                            <h6>Thể loại</h6><br>
+                            {{addbook.category}}
+                        </div>
+                    </div><br>
+                    </fieldset>
+            </form>
+            
+        {% else %}
+            <fieldset disabled>
+            <div class="row">
+                <div class="col-sm">
+                    <h6>Tiêu đề*</h6><br>
+                    {{addbook.bookName}}
+                </div>
+                <div class="col-sm">
+                    <h6>Tác giả*</h6><br>
+                    {{addbook.authorName}}
+                </div>
+            </div><br>
+            <div class="row">
+                <div class="col-sm">
+                    <h6>Mô tả về sách</h6><br>
+                    {{addbook.decriptions}}
+                </div>
+            </div><br>
+            <div class="row">
+                <div class="col-sm">
+                    <h6>Ngày phát hành*</h6><br>
+                    {{addbook.releaseDate}}
+                </div>
+                <div class="col-sm">
+                    <h6>Số trang</h6><br>
+                    {{addbook.pages}}
+                </div>
+            </div><br>
+            <div class="row">
+                <div class="col-sm">
+                    <h6>Thể loại</h6><br>
+                    {{addbook.category}}
+                </div>
+            </div><br>
+            </fieldset>
+        {% endif %}
+    </div>
+        <div class="col-sm">
+            <h1 style="font-family: digital; text-align:center">Bìa sách</h1>
+            {% for book in sach1 %}    
+                {% if book.avatar %}
+                <img src="{{book.avatar.url}}" width="300px" height="400px" alt="avatar" class="rounded mx-auto d-block"/>
+                {% else %}
+                <h1 style="font-family: digital; text-align:center">Không có bìa</h1>
+                {% endif %}
+            {% endfor %}<br>
+            {% if not perms.myApp.change_books %}
+            <h2 style="font-family: digital; text-align:center">Nhận xét sản phẩm</h2>
+            <form class="" action="" method='POST' name="postReview">
+                {% csrf_token %}
+                {{form|crispy}}
+                <button type="submit" class="btn btn-success col-12" name="postReview">Gửi đánh giá</button>
+            </form>
+            <form action="" method="POST" name="addtocart">
+                {% csrf_token %}
+                {{formcartitem|crispy}}
+                <button type="submit" class="btn btn-primary col-12" name="addtocart">Thêm hàng vào giỏ</button>
+            </form>
+            {% endif %}
+        </div>
+    </div><hr>
+    {% if perms.myApp.change_books %}
+    <div class="d-flex flex-row-reverse">
+        <footer>
+            <button onclick="openField()" class="btn btn-primary p-2">Nhấp để sửa</button>
+            <button type="submit" class="btn btn-success p-2" name="update" form="update1">Chấp nhận</button>
+        </footer>
+    </div>
+    {% endif %}
+    <br><br>
+    <h2 class="text-center" style="font-family: digital;">Đánh giá</h2><br>
+    {% for review in change.comments.all %}
+    <div class="container" style="font-family: digital;">
+        <div class="row">
+        <div class="col-2 text-center border border-black p-2">
+            <h5 class="p-3"><strong>{{review.user.username}}{% if request.user == review.user %}(*tôi){% endif %}</strong></h5><hr>
+            <h5 class="">{{ review.review_rating }} <svg height="21" width="50">
+                <polygon points="10,1 4,20 19,8 1,8 16,20"
+                style="fill:rgb(222, 166, 0);" />
+            </svg></h5>
+        </div>
+        <div class="col-8  border border-black p-3 pl-5" style="font-size: 19px;">
+            {{ review.review_text }}
+        </div>
+        {% if request.user == review.user %}
+        <div class="col-2">
+            <p><a class="btn btn-outline-danger w-50 p-2" width href="{% url 'deletereview' change.id review.id %}" onclick="return confirm('Xác nhận xóa bình luận này?')">Xóa</a></p>
+        </div>
+        {% endif %}
+        <div class="col-3 text-center m-1">
+            <small class="">Đã đăng vào: {{ review.created_at}}</small>
+        </div>
+        </div>
+    </div><br><br>
+    {% endfor %}
+</div>
+
+<script>
+    var count = (
+        function () {
+            let count = 0;
+            return function() {return count += 1;}
+        }
+    )();
+    function openField(){
+        count1 = count();
+        if (count1 % 2 != 0){
+            document.getElementById("eth").disabled=false;
+        }
+        else {
+            document.getElementById("eth").disabled=true;
+        }
+    }
+</script>
+{% endblock %}

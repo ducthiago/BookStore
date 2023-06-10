@@ -1,0 +1,18 @@
+{% extends 'myapp.html' %}
+{% load crispy_forms_tags %}
+{% block title %}Đăng nhập{% endblock %}
+{% block content %}
+<div class="container">
+  {% if messages %}
+      {% for message in messages %}
+          <div class="alert alert-{{message.tags}}">{{message}}</div>
+      {% endfor %}
+  {% endif %}
+</div>
+  <form class="mx-auto col-6 col-sm-6" action="{% url 'signin' %}" method='POST'>
+    {% csrf_token %}
+    {{form|crispy}}
+    <input type="submit" value="Đăng nhập" class="btn btn-primary"/>
+    <a href="{% url 'signup' %}" class="btn btn-primary">Chưa có tài khoản? Hãy tạo ngay nào!</a>
+  </form>
+{% endblock %}

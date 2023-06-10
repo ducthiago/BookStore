@@ -1,0 +1,50 @@
+{% extends 'myapp.html' %}
+{% load crispy_forms_tags %}
+{% block title %}Xác nhận{% endblock %}
+{% block content %}
+<br><h1 class="text-center ok">Xác nhận đã nhận hàng</h1><br>
+
+<form class="d-flex justify-content-center" action="" method='POST' id="xong">
+    {% csrf_token %}
+    {{form|crispy}}
+</form><br>
+
+<table class="table table-hover table-bordered col-11 mx-auto text-center">
+    <thead class="thead-light">
+      <tr class="">
+        <th scope="col" class=" pad">Bìa sách</th>
+        <th scope="col" class=" pad">Tên sách</th>
+        <th scope="col" class=" pad">Số lượng</th>
+        <th scope="col" class=" pad">Tổng giá</th>
+      </tr>
+    </thead>
+    {% for item in order.cart_items.all %}
+    <tbody class="border-black">
+        <tr class="pad">
+          {% if item.avatar %}
+          <td><img src="{{item.avatar.url}}" alt={{item.bookName}} width="50" height="50" class="rounded-circle" alt="avatar"/></td>
+          {% else %}
+          <td>Không có bìa</td>
+          {% endif %}
+            <td>{{item.bookName}}</td>
+            <td>{{item.quantity}}</td>
+            <td>{{item.cart_item_total}} VNĐ</td>
+          </tr>
+    </tbody>
+    {% endfor %}
+    <tfoot>
+      <tr>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td>Tổng: {{order.paid_amount}} VNĐ</td>
+      </tr>
+    </tfoot>
+  </table>
+<br>
+<div class="col-2 mx-auto">
+        <input form="xong" type="submit" value="Xác nhận" class="btn btn-success"/>
+        <a class="btn btn-primary" href="{% url 'profile' %}">Quay lại</a>
+</div>
+<br><br>
+{% endblock %}

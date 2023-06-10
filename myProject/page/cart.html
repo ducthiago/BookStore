@@ -1,0 +1,54 @@
+{% extends 'myapp.html' %}
+{% load crispy_forms_tags %}
+{% block title %}Giỏ hàng{% endblock %}
+{% block content %}
+<br>
+<h1 style="text-align:center; font-family:digital">Giỏ hàng</h1><br>
+<div class="container">
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{message.tags}}">{{message}}</div>
+        {% endfor %}
+    {% endif %}
+</div>
+<div class="container">
+    <table class="table table-hover table-bordered col-10 mx-auto text-center">
+        <thead class="thead-light">
+          <tr class="">
+            <th scope="col" class=" pad">Bìa sách</th>
+            <th scope="col" class=" pad">Tác giả</th>
+            <th scope="col" class=" pad">Tên sách</th>
+            <th scope="col" class=" pad">Số lượng</th>
+            <th scope="col" class=" pad">Tổng giá</th>
+            <th scope="col" class=" pad"></th>
+          </tr>
+        </thead>
+        <tbody class="border-black">
+            {% for item in cart_item %}
+            <tr title="Thể loại: {{item.books.category}}" class="pad">
+              {% if item.avatar %}
+              <td><img src="{{item.avatar.url}}" alt={{item.bookName}} width="50" height="50" class="rounded-circle" alt="avatar"/></td>
+              {% else %}
+              <td>Không có bìa</td>
+              {% endif %}
+                <td>{{item.authorName}}</td>
+                <td>{{item.bookName}}</td>
+                <td>{{item.quantity}}</td>
+                <td>{{item.cart_item_total}} VNĐ</td>
+                <td><a href="{% url 'deleteitem' item.id %}" class="btn btn-outline-danger" onclick="return confirm('Xác nhận xóa cuốn sách này?')">Xóa</a></td>
+              </tr>
+            {% endfor %}
+        </tbody>
+        <tfoot>
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td>Tổng giá: {{paid_amount}} VNĐ</td>
+            <td><a href="{% url 'check_out' %}" class="btn btn-success">Check out</a></td>
+          </tr>
+        </tfoot>
+      </table>
+</div>
+{% endblock %}

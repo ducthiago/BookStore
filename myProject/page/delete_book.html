@@ -1,0 +1,11 @@
+{% extends 'myapp.html' %}
+{% load crispy_forms_tags %}
+{% block title %}Xóa{% endblock %}
+{% block content %}
+<h1 class="text-center">Xác nhận xóa cuốn sách "{{delete}}" khỏi thư viện?</h1><br>
+<form class="d-flex justify-content-center" action="{% url 'delete_book' delete.id %}" method='POST'>
+    {% csrf_token %}
+    <a class="btn btn-success" href="{% url 'index' %}">Quay lại</a>
+    <input type="submit" value="Xác nhận" class="btn btn-danger"/>
+</form>
+{% endblock %}
